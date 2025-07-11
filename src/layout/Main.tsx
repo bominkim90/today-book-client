@@ -8,29 +8,41 @@ interface MainProps {
 
 export default function Main({ children }: MainProps) {
   const [showTopButton, setShowTopButton] = useState(false);
+  const [halfScreenHeight, setHalfScreenHeight] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (mainRef.current) {
-        const scrollTop = mainRef.current.scrollTop;
-        const clientHeight = mainRef.current.clientHeight;
-        
-        // 화면의 절반 이상 스크롤했는지 확인
-        const halfScreen = clientHeight / 2;
-        setShowTopButton(scrollTop > halfScreen);
-      }
-    };
-
     const mainElement = mainRef.current;
-    if (mainElement) {
-      mainElement.addEventListener('scroll', handleScroll);
-      
-      return () => {
-        mainElement.removeEventListener('scroll', handleScroll);
-      };
-    }
+    if (!mainElement) return;
+  
+    // 높이 감지
+    const updateHalfScreenHeight = () => {
+      setHalfScreenHeight(mainElement.clientHeight / 2);
+    };
+  
+    updateHalfScreenHeight();
+  
+    const resizeObserver = new ResizeObserver(updateHalfScreenHeight);
+    resizeObserver.observe(mainElement);
+  
+    // 스크롤 감지
+    const handleScroll = () => {
+      setShowTopButton(mainElement.scrollTop > halfScreenHeight);
+    };
+    mainElement.addEventListener('scroll', handleScroll);
+  
+    return () => {
+      mainElement.removeEventListener('scroll', handleScroll);
+      resizeObserver.disconnect();
+    };
   }, []);
+  
+  useEffect(() => {
+    // halfScreenHeight가 바뀌면 현재 scrollTop과 비교해서 바로 갱신
+    const mainElement = mainRef.current;
+    if (!mainElement) return;
+    setShowTopButton(mainElement.scrollTop > halfScreenHeight);
+  }, [halfScreenHeight]);
 
   function scrollToTop() {
     if (mainRef.current) {

@@ -5,4 +5,7 @@ export async function getUserInfo() {
   return response.data;
 }
 
-export function logout() {}
+export async function logout() {
+  const response = await axios.post('/api/auth/logout');
+  return response.data;
+}
