@@ -1,17 +1,15 @@
-import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../../hooks/useLogout';
 import ConfirmModal from '../../../components/modals/ConfirmModal';
 import { useState } from 'react';
 
 export default function LogoutButton() {
-  const navigate = useNavigate();
   const { mutate: logout } = useLogout();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   async function handleLogout() {
     logout(undefined, {
       onSuccess: () => {
-        navigate('/');
+        window.location.href = '/';
       },
       onError: (error) => {
         console.error('로그아웃 실패:', error);
