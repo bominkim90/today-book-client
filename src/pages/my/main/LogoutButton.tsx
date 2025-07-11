@@ -20,7 +20,7 @@ export default function LogoutButton() {
   }
 
   return (
-    <>
+    <div>
     <button className="w-full h-[48px] bg-mainGray text-textSecondary rounded-sm" onClick={() => setShowConfirmModal(true)}>
       로그아웃
     </button>
@@ -31,6 +31,6 @@ export default function LogoutButton() {
       onConfirm={handleLogout}
       onCancel={() => setShowConfirmModal(false)}
     />}
-    </>
+    </div>
   );
 }
